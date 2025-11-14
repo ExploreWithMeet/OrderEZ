@@ -3,6 +3,7 @@ import pandas as pd
 from utils.returnFormat import returnFormat
 from core.config import Config
 from schema.convex_schema import ConvexRequest
+import json
 
 CONVEX_URL = Config.convex_url
 
@@ -25,7 +26,7 @@ async def call_convex(c_req: ConvexRequest) -> dict:
             response.raise_for_status()
 
             result = response.json()
-            print("Convex Result:", result)
+            # print("Convex Result:", result)
 
             if result.get("status") == "error":
                 return returnFormat(
@@ -33,12 +34,7 @@ async def call_convex(c_req: ConvexRequest) -> dict:
                 )
 
             data = result.get("value")
-            if c_req.returnDf:
-                return returnFormat(
-                    "success", "Convex Request: Successfull", pd.DataFrame(data)
-                )
-            else:
-                return returnFormat("success", "Convex Request: Successfull", data)
+            return returnFormat("success", "Convex Request: Successfull", data)
 
     except httpx.RequestError as e:
         return returnFormat("error", f"Convex API request failed: {str(e)}")
